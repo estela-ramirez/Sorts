@@ -37,56 +37,50 @@ void quick_sort(int array[], size_t size)
   // Implement here
 }
 
+// return index of max value (between parent and children)
 int max(int array[], int size, const int pindex)
 {
-  int left_index = (pindex * 2) + 1;
-  int right_index = (pindex * 2) + 2;
-  if (left_index >= size)   // there is no left child
-  {
-    left_index = -1;
-  }
+  int max_index = pindex;
+  int l_index = (max_index * 2) + 1;
+  int r_index = (max_index * 2) + 2;
 
-  if (right_index >= size)  // there is no right child
-  {
-    right_index = -1;
-  }
+  if (l_index < size && array[l_index]> array[max_index])  
+    max_index = l_index;
 
-  if (left_index == -1){return -1;}             // no children
-
-  if (left_index != -1 && right_index == -1){    //only left child
-    return left_index;
-  }
-
-  if (array[left_index] > array[right_index])   //both children
-  {
-    return left_index;
-  }
-  return right_index;
+  if (r_index < size && array[r_index]> array[max_index])  
+    max_index = r_index;
+    
+  return max_index;
 }
 
-void heapify(int array[], size_t size)
+void heapify(int array[], size_t size, int p_index)
 {
+    int max_index = max(array, size, p_index);
 
-  for (int parent_index = (size / 2) - 1; parent_index >= 0; parent_index--)
-  {
-    int pindex = parent_index;
-    int max_index = max(array, size, pindex);
-
-    while(max_index != -1){
-      if (array[max_index] > array[pindex])
-    {
-      swap(&array[max_index], &array[pindex]);
+    while(max_index != p_index){
+      if (array[max_index] > array[p_index]){
+          swap(&array[max_index], &array[p_index]);
+          p_index = max_index;
+          max_index = max(array, size, p_index);
+          
+      }else{
+          break;
+      }
     }
-    pindex = max_index;
-    max_index = max(array, size, pindex);
-    }
-  }
-
 }
 
 void heap_sort(int array[], size_t size)
 {
-  // Implement here
+  // turn to max heap
+  for (int p_index = (size / 2) - 1; p_index >= 0; p_index--){
+      heapify(array, size, p_index);
+  }
+  
+  // delete one by one
+  for (int i = 1; i < size; ++i){
+      swap(&array[0], &array[size-i]);
+      heapify(array, size-i, 0);
+  }
 }
 
 void merge_sort(int array[], size_t size)
@@ -128,15 +122,17 @@ long long time_example() {
 }
 */
 
-int main()
-{
+int main(){
 
-  int arr[] = {10, 20, 15, 12, 40, 25, 18, 13};
-
-  heapify(arr, 8);
-
-  // for (int i = 0; i < 6; i++){
-  //   cout << arr[i] << ", ";
-  // }
+  int arr[] = {10, 20, 15, 12, 40, 25, 18};
+  size_t size = 7;
+  
+  heap_sort(arr, size);
+    
+  // print sorted array
+  for (int i = 0; i < 7; i++){
+     cout << arr[i] << ", ";
+  }
+  
   return 0;
 }
