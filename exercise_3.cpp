@@ -5,6 +5,8 @@
 #include <chrono>
 #include <cstdio>
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 using namespace std;
 
 void swap(int *a, int *b)
@@ -32,11 +34,6 @@ void insertion_sort(int array[], size_t size)
   }
 }
 
-void quick_sort(int array[], size_t size)
-{
-  // Implement here
-}
-
 // return index of max value (between parent and children)
 int max(int array[], int size, const int pindex)
 {
@@ -52,6 +49,7 @@ int max(int array[], int size, const int pindex)
     
   return max_index;
 }
+
 
 void heapify(int array[], size_t size, int p_index)
 {
@@ -86,6 +84,48 @@ void heap_sort(int array[], size_t size)
 void merge_sort(int array[], size_t size)
 {
   // Implement here
+}
+
+
+
+//returns pivot index
+int partition(int array[], int l, int h){
+
+  int midpoint = (h-l)/2+ l;
+  int pivot = array[midpoint];
+  int i = l;
+  int j = h;
+
+  while(i<j){
+
+    while(array[i] <= pivot){  // stops once it finds a bigger number
+      i++;
+    }
+
+    while(array[j]> pivot){   // stops once it finds a smaller number
+      --j;
+    }
+
+    if (i<j){
+      swap(&array[i], &array[j]);
+    }
+  }
+
+  swap(&array[midpoint], &array[j]);
+  return j;
+}
+
+void quick_sort_internal(int array[], int l, int h){
+  if (h-l > 1){
+    int pivot_index = partition(array, l, h);
+    
+    quick_sort_internal(array, l, pivot_index-1);
+    quick_sort_internal(array, pivot_index+1, h);
+  }
+}
+void quick_sort(int array[], size_t size)
+{ 
+  quick_sort_internal(array, 0, size-1);
 }
 
 /*
@@ -124,15 +164,20 @@ long long time_example() {
 
 int main(){
 
-  int arr[] = {10, 20, 15, 12, 40, 25, 18};
-  size_t size = 7;
+  int arr[] = {10, 20, 15, 12, 40, 25, 18, 13, -1, 2, 21, 41};
+  size_t size = 12;
   
-  heap_sort(arr, size);
-    
-  // print sorted array
-  for (int i = 0; i < 7; i++){
-     cout << arr[i] << ", ";
+  for (int i = 0; i < size; i++){
+      cout << arr[i] << ", ";
   }
+  cout << endl;
+  
+  ///
+  quick_sort(arr, size);
+  for (int i = 0; i < size; i++){
+      cout << arr[i] << ", ";
+  }
+
   
   return 0;
 }
