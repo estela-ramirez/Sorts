@@ -81,18 +81,108 @@ void heap_sort(int array[], size_t size)
   }
 }
 
+
+void merge(int array[], int l, int nl, int nr){
+
+  cout << "l = " << ", nl = " <<nl << ", nr = " << nr << endl;
+  int * temp = new int[nl+nr];
+  int * left = new int[nl];
+  int * right = new int[nr];
+
+  int count = 0;
+  for (int i = l; i<nl; i++){
+    left[count] = array[i];
+    count++;
+  }
+
+  cout << "LEFT -> ";
+  for (int i =0; i < nl; i++){
+    cout << left[i] << ",";
+  }
+
+  count = 0;
+  for (int j = l+nl; j<nr; j++){
+    left[count] = array[j];
+    count++;
+  }
+
+  cout << "RIGHT -> ";
+  for (int i =0; i < nr; i++){
+    cout << right[i] << ",";
+  }
+
+  int i = 0;
+  int j = 0;
+  int k = 0;
+
+  
+  while(i != nl && j != nr){
+    cout << "nl = " << nl << ", nr =" << nr<< endl;
+    if(array[i] < array[j]){
+      temp[k] = array[i];
+      i++;
+    }else{
+      temp[k++] = array[j++];
+ 
+      j++;
+    }
+    k++;
+  }
+
+
+  for(; i < nl; i++){
+    temp[k] = array[i];
+    k++;
+  }
+
+  for(; j < nr; j++){
+    temp[k++] = array[j];
+    k++;
+  }
+
+  count = 0;
+  for (i = l; i < (nl+nr); i++){
+    array[i] = temp[count++];
+
+  }
+
+  delete[] temp;
+  delete[] left;
+  delete[] right;
+
+}
+
+void merge_sort_internal(int array[], int l, int size){
+
+  if (size>1){
+        int leftSize, rightSize;
+        leftSize = size / 2;
+				if (size % 2 != 0) { // it's odd
+					rightSize = leftSize + 1;
+				} else {
+					rightSize = leftSize;
+				}
+
+        merge_sort_internal(array, l, leftSize);
+				merge_sort_internal(array, l + leftSize, rightSize);
+				merge(array, l, leftSize, rightSize);
+
+  }
+}
+
 void merge_sort(int array[], size_t size)
 {
-  // Implement here
+  merge_sort_internal(array, 0, (int)size-1);
 }
 
 
 
 //returns pivot index
+//returns pivot index
 int partition(int array[], int l, int h){
 
-  int midpoint = (h-l)/2+ l;
-  int pivot = array[midpoint];
+  swap(&array[((h-l)/2)+ l], &array[l]);
+  int pivot = array[l];
   int i = l;
   int j = h;
 
@@ -111,22 +201,27 @@ int partition(int array[], int l, int h){
     }
   }
 
-  swap(&array[midpoint], &array[j]);
+  swap(&array[l], &array[j]);
   return j;
 }
 
 void quick_sort_internal(int array[], int l, int h){
-  if (h-l > 1){
+  if (l < h){
     int pivot_index = partition(array, l, h);
     
     quick_sort_internal(array, l, pivot_index-1);
     quick_sort_internal(array, pivot_index+1, h);
   }
 }
+
 void quick_sort(int array[], size_t size)
 { 
-  quick_sort_internal(array, 0, size-1);
+  quick_sort_internal(array, 0, (int)size-1);
 }
+
+
+
+
 
 /*
  * Generate random integers for exercise 3.b
@@ -164,15 +259,15 @@ long long time_example() {
 
 int main(){
 
-  int arr[] = {10, 20, 15, 12, 40, 25, 18, 13, -1, 2, 21, 41};
-  size_t size = 12;
+  int arr[] = {-4, 10, 20, -1, 15, 12, 40, 1};
+  size_t size = 8;
   
   for (int i = 0; i < size; i++){
       cout << arr[i] << ", ";
   }
   cout << endl;
   
-  ///
+  
   quick_sort(arr, size);
   for (int i = 0; i < size; i++){
       cout << arr[i] << ", ";
